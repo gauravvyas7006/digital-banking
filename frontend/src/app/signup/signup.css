@@ -1,0 +1,19 @@
+form {
+  width: 300px;
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+input {
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px;
+  background-color: blue;
+  color: white;
+  border: none;
+}
