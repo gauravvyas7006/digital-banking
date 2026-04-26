@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angular + Spring Boot CRUD Guide</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e3a5f, #0d47a1);
+      padding: 50px 40px;
+      text-align: center;
+      border-bottom: 3px solid #2563eb;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #93c5fd;
+      font-size: 1.1rem;
+    }
+
+    .flow-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      background: #161b27;
+      padding: 18px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .flow-item {
+      background: #1e293b;
+      border: 1px solid #2563eb;
+      color: #93c5fd;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .flow-arrow { color: #4b5563; font-size: 1.2rem; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
+
+    .step {
+      background: #161b27;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .backend .step-number { background: #1d4ed8; color: #fff; }
+    .frontend .step-number { background: #059669; color: #fff; }
+
+    .step-header h2 { font-size: 1.2rem; color: #f1f5f9; }
+
+    .step-header .tag {
+      margin-left: auto;
+      padding: 3px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .backend .tag { background: #1e3a5f; color: #60a5fa; }
+    .frontend .tag { background: #064e3b; color: #34d399; }
+
+    .step-body { padding: 24px; }
+
+    .step-desc {
+      background: #1e293b;
+      border-left: 4px solid #2563eb;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    .frontend .step-desc { border-left-color: #059669; }
+
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .code-header {
+      background: #161b22;
+      padding: 8px 16px;
+      font-size: 0.78rem;
+      color: #8b949e;
+      border-bottom: 1px solid #21262d;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .code-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.84rem;
+    }
+
+    .code-table tr { transition: background 0.15s; }
+    .code-table tr:hover { background: #1c2333; }
+
+    .line-num {
+      width: 40px;
+      text-align: right;
+      padding: 3px 12px 3px 8px;
+      color: #4b5563;
+      user-select: none;
+      border-right: 1px solid #21262d;
+      vertical-align: top;
+    }
+
+    .line-code {
+      padding: 3px 16px;
+      white-space: pre;
+      color: #e2e8f0;
+      vertical-align: top;
+    }
+
+    .line-why {
+      padding: 3px 12px 3px 20px;
+      color: #64748b;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 0.78rem;
+      font-style: italic;
+      vertical-align: top;
+      border-left: 1px solid #21262d;
+      width: 38%;
+    }
+
+    .line-why.highlight { color: #fbbf24; }
+    .line-why.important { color: #f87171; }
+    .line-why.info { color: #34d399; }
+
+    tr.section-gap td { padding-top: 6px; }
+
+    .keyword { color: #ff7b72; }
+    .annotation { color: #d2a8ff; }
+    .string { color: #a5d6ff; }
+    .type { color: #ffa657; }
+    .comment { color: #8b949e; font-style: italic; }
+    .method { color: #79c0ff; }
+    .variable { color: #e2e8f0; }
+    .import-kw { color: #ff7b72; }
+    .class-name { color: #ffa657; }
+
+    .callout {
+      display: flex;
+      gap: 12px;
+      background: #1c2333;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 16px;
+      font-size: 0.88rem;
+    }
+
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .callout-text { color: #94a3b8; }
+    .callout-text strong { color: #e2e8f0; }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #4b5563;
+      font-size: 0.85rem;
+      border-top: 1px solid #1e293b;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Angular → Spring Boot → PostgreSQL</h1>
+  <p>How to send signup form data from the frontend, through an API, and save it to the database</p>
+</header>
+
+<div class="flow-bar">
+  <span class="flow-item">Angular Form</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">AuthService (HttpClient)</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">HTTP POST Request</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">Spring Boot Controller</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">Repository</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">PostgreSQL (Neon)</span>
+</div>
+
+<div class="container">
+
+  <!-- STEP 1 -->
+  <div class="step backend">
+    <div class="step-header">
+      <div class="step-number">1</div>
+      <h2>Fix pom.xml — Remove wrong scope from spring-boot-starter-web</h2>
+      <span class="tag">Backend</span>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">
+        Currently <code>spring-boot-starter-web</code> has <code>&lt;scope&gt;test&lt;/scope&gt;</code> which means it only exists during testing — your REST controllers will not work at all. Remove that scope line.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span>pom.xml</span><span>Change</span></div>
+        <table class="code-table">
+          <tr><td class="line-num">1</td><td class="line-code"><span class="keyword">&lt;dependency&gt;</span></td><td class="line-why"></td></tr>
+          <tr><td class="line-num">2</td><td class="line-code">  <span class="string">&lt;groupId&gt;</span>org.springframework.boot<span class="string">&lt;/groupId&gt;</span></td><td class="line-why info">Maven group for all Spring Boot libs</td></tr>
+          <tr><td class="line-num">3</td><td class="line-code">  <span class="string">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="string">&lt;/artifactId&gt;</span></td><td class="line-why info">Brings in REST, HTTP server (Tomcat), JSON support</td></tr>
+          <tr><td class="line-num">4</td><td class="line-code">  <span class="comment">&lt;!-- DELETE the line below --&gt;</span></td><td class="line-why important">This line is the bug — it hides the library from production</td></tr>
+          <tr><td class="line-num">5</td><td class="line-code">  <span class="keyword">&lt;scope&gt;</span>test<span class="keyword">&lt;/scope&gt;</span></td><td class="line-why important">DELETE THIS LINE — scope=test means only available during tests</td></tr>
+          <tr><td class="line-num">6</td><td class="line-code"><span class="keyword">&lt;/dependency&gt;</span></td><td class="line-why"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step backend">
+    <div class="step-header">
+      <div class="step-number">2</div>
+      <h2>Create User.java — The database table blueprint</h2>
+      <span class="tag">Backend</span>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">
+        This class tells Hibernate (the ORM) what the <strong>users</strong> table should look like. Each field becomes a column. You do not write SQL — Hibernate auto-creates the table because <code>ddl-auto=update</code> is set in your properties.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span>src/main/java/com/example/demo/model/User.java</span><span>New File</span></div>
+        <table class="code-table">
+          <tr><td class="line-num">1</td><td class="line-code"><span class="keyword">package</span> com.example.demo.<span class="type">model</span>;</td><td class="line-why">Declares which folder/package this file lives in</td></tr>
+          <tr class="section-gap"><td class="line-num">3</td><td class="line-code"><span class="import-kw">import</span> jakarta.persistence.*;</td><td class="line-why info">Imports all JPA annotations like @Entity, @Id, @Column</td></tr>
+          <tr class="section-gap"><td class="line-num">5</td><td class="line-code"><span class="annotation">@Entity</span></td><td class="line-why highlight">Tells Hibernate: this class = a database table</td></tr>
+          <tr><td class="line-num">6</td><td class="line-code"><span class="annotation">@Table</span>(name = <span class="string">"users"</span>)</td><td class="line-why highlight">Sets the actual table name in PostgreSQL to "users"</td></tr>
+          <tr><td class="line-num">7</td><td class="line-code"><span class="keyword">public class</span> <span class="class-name">User</span> {</td><td class="line-why"></td></tr>
+          <tr class="section-gap"><td class="line-num">9</td><td class="line-code">  <span class="annotation">@Id</span></td><td class="line-why highlight">Marks this field as the PRIMARY KEY of the table</td></tr>
+          <tr><td class="line-num">10</td><td class="line-code">  <span class="annotation">@GeneratedValue</span>(strategy = GenerationType.<span class="type">IDENTITY</span>)</td><td class="line-why highlight">Auto-increment the ID — PostgreSQL assigns 1, 2, 3... automatically</td></tr>
+          <tr><td class="line-num">11</td><td class="line-code">  <span class="keyword">private</span> <span class="type">Long</span> id;</td><td class="line-why">The ID column — Long because IDs can get very large</td></tr>
+          <tr class="section-gap"><td class="line-num">13</td><td class="line-code">  <span class="keyword">private</span> <span class="type">String</span> name;</td><td class="line-why">Becomes the "name" column — stores the user's name</td></tr>
+          <tr class="section-gap"><td class="line-num">15</td><td class="line-code">  <span class="annotation">@Column</span>(unique = <span class="keyword">true</span>)</td><td class="line-why important">Prevents two users from registering with the same email</td></tr>
+          <tr><td class="line-num">16</td><td class="line-code">  <span class="keyword">private</span> <span class="type">String</span> email;</td><td class="line-why">Becomes the "email" column</td></tr>
+          <tr class="section-gap"><td class="line-num">18</td><td class="line-code">  <span class="keyword">private</span> <span class="type">String</span> password;</td><td class="line-why">Becomes the "password" column</td></tr>
+          <tr class="section-gap"><td class="line-num">20</td><td class="line-code">  <span class="comment">// add getters and setters for all fields</span></td><td class="line-why important">Spring needs getters/setters to read and write JSON automatically</td></tr>
+          <tr><td class="line-num">21</td><td class="line-code">}</td><td class="line-why"></td></tr>
+        </table>
+      </div>
+      <div class="callout">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text">In IntelliJ, right-click inside the class → <strong>Generate → Getter and Setter</strong> to create all getters/setters automatically.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step backend">
+    <div class="step-header">
+      <div class="step-number">3</div>
+      <h2>Create UserRepository.java — Database operations for free</h2>
+      <span class="tag">Backend</span>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">
+        By extending <code>JpaRepository</code>, Spring automatically gives you methods like <code>save()</code>, <code>findAll()</code>, <code>deleteById()</code> — you write zero SQL.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span>src/main/java/com/example/demo/repository/UserRepository.java</span><span>New File</span></div>
+        <table class="code-table">
+          <tr><td class="line-num">1</td><td class="line-code"><span class="keyword">package</span> com.example.demo.<span class="type">repository</span>;</td><td class="line-why">Package declaration for this file</td></tr>
+          <tr class="section-gap"><td class="line-num">3</td><td class="line-code"><span class="import-kw">import</span> com.example.demo.model.<span class="class-name">User</span>;</td><td class="line-why">Brings in your User class so this repo knows what to work with</td></tr>
+          <tr><td class="line-num">4</td><td class="line-code"><span class="import-kw">import</span> org.springframework.data.jpa.repository.<span class="class-name">JpaRepository</span>;</td><td class="line-why info">The Spring magic interface that gives you all DB methods</td></tr>
+          <tr class="section-gap"><td class="line-num">6</td><td class="line-code"><span class="keyword">public interface</span> <span class="class-name">UserRepository</span></td><td class="line-why"></td></tr>
+          <tr><td class="line-num">7</td><td class="line-code">    <span class="keyword">extends</span> <span class="class-name">JpaRepository</span>&lt;<span class="type">User</span>, <span class="type">Long</span>&gt; {</td><td class="line-why highlight">User = which table, Long = type of the ID column</td></tr>
+          <tr><td class="line-num">8</td><td class="line-code">}</td><td class="line-why info">Body is empty — Spring auto-generates save(), findAll(), etc.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step backend">
+    <div class="step-header">
+      <div class="step-number">4</div>
+      <h2>Create UserController.java — The API endpoint Angular will call</h2>
+      <span class="tag">Backend</span>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">
+        This is the entry point for HTTP requests from Angular. It listens for a POST to <code>/api/users/signup</code>, receives the JSON body, saves it, and returns the saved user.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span>src/main/java/com/example/demo/controller/UserController.java</span><span>New File</span></div>
+        <table class="code-table">
+          <tr><td class="line-num">1</td><td class="line-code"><span class="keyword">package</span> com.example.demo.<span class="type">controller</span>;</td><td class="line-why">Package declaration</td></tr>
+          <tr class="section-gap"><td class="line-num">3</td><td class="line-code"><span class="import-kw">import</span> com.example.demo.model.<span class="class-name">User</span>;</td><td class="line-why">Your User entity</td></tr>
+          <tr><td class="line-num">4</td><td class="line-code"><span class="import-kw">import</span> com.example.demo.repository.<span class="class-name">UserRepository</span>;</td><td class="line-why">The repo that talks to the database</td></tr>
+          <tr><td class="line-num">5</td><td class="line-code"><span class="import-kw">import</span> org.springframework.http.<span class="class-name">ResponseEntity</span>;</td><td class="line-why">Lets you control the HTTP status code you send back</td></tr>
+          <tr><td class="line-num">6</td><td class="line-code"><span class="import-kw">import</span> org.springframework.web.bind.annotation.*;</td><td class="line-why info">Imports @RestController, @PostMapping, @RequestBody, etc.</td></tr>
+          <tr class="section-gap"><td class="line-num">8</td><td class="line-code"><span class="annotation">@RestController</span></td><td class="line-why highlight">Tells Spring: this class handles HTTP requests and returns JSON</td></tr>
+          <tr><td class="line-num">9</td><td class="line-code"><span class="annotation">@RequestMapping</span>(<span class="string">"/api/users"</span>)</td><td class="line-why highlight">Base URL — all endpoints in this class start with /api/users</td></tr>
+          <tr><td class="line-num">10</td><td class="line-code"><span class="annotation">@CrossOrigin</span>(origins = <span class="string">"http://localhost:4200"</span>)</td><td class="line-why important">Allows Angular (port 4200) to call this API — without this the browser blocks the request</td></tr>
+          <tr><td class="line-num">11</td><td class="line-code"><span class="keyword">public class</span> <span class="class-name">UserController</span> {</td><td class="line-why"></td></tr>
+          <tr class="section-gap"><td class="line-num">13</td><td class="line-code">  <span class="keyword">private final</span> <span class="class-name">UserRepository</span> userRepository;</td><td class="line-why">Holds the reference to the repository</td></tr>
+          <tr class="section-gap"><td class="line-num">15</td><td class="line-code">  <span class="keyword">public</span> <span class="method">UserController</span>(<span class="class-name">UserRepository</span> userRepository) {</td><td class="line-why highlight">Constructor injection — Spring automatically provides the repo here</td></tr>
+          <tr><td class="line-num">16</td><td class="line-code">    <span class="keyword">this</span>.userRepository = userRepository;</td><td class="line-why">Assigns the injected repo to the field</td></tr>
+          <tr><td class="line-num">17</td><td class="line-code">  }</td><td class="line-why"></td></tr>
+          <tr class="section-gap"><td class="line-num">19</td><td class="line-code">  <span class="annotation">@PostMapping</span>(<span class="string">"/signup"</span>)</td><td class="line-why highlight">Listens for POST requests at /api/users/signup</td></tr>
+          <tr><td class="line-num">20</td><td class="line-code">  <span class="keyword">public</span> <span class="class-name">ResponseEntity</span>&lt;<span class="type">User</span>&gt; <span class="method">signup</span>(</td><td class="line-why">Method that runs when signup is called</td></tr>
+          <tr><td class="line-num">21</td><td class="line-code">      <span class="annotation">@RequestBody</span> <span class="class-name">User</span> user) {</td><td class="line-why highlight">@RequestBody reads the JSON from Angular and maps it to a User object</td></tr>
+          <tr><td class="line-num">22</td><td class="line-code">    <span class="class-name">User</span> saved = userRepository.<span class="method">save</span>(user);</td><td class="line-why highlight">Saves the user to PostgreSQL — returns the saved object with its new ID</td></tr>
+          <tr><td class="line-num">23</td><td class="line-code">    <span class="keyword">return</span> ResponseEntity.<span class="method">ok</span>(saved);</td><td class="line-why info">Sends back HTTP 200 with the saved user as JSON</td></tr>
+          <tr><td class="line-num">24</td><td class="line-code">  }</td><td class="line-why"></td></tr>
+          <tr><td class="line-num">25</td><td class="line-code">}</td><td class="line-why"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step frontend">
+    <div class="step-header">
+      <div class="step-number">5</div>
+      <h2>Add HttpClient to app.config.ts — Enable HTTP in Angular</h2>
+      <span class="tag">Frontend</span>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">
+        Angular's <code>HttpClient</code> is the tool used to make HTTP requests. You have to register it once globally in <code>app.config.ts</code> — without this, injecting <code>HttpClient</code> anywhere in the app will crash.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span>src/app/app.config.ts</span><span>Edit</span></div>
+        <table class="code-table">
+          <tr><td class="line-num">1</td><td class="line-code"><span class="import-kw">import</span> { ApplicationConfig, ... } <span class="import-kw">from</span> <span class="string">'@angular/core'</span>;</td><td class="line-why">Already there — keep it</td></tr>
+          <tr><td class="line-num">2</td><td class="line-code"><span class="import-kw">import</span> { provideRouter } <span class="import-kw">from</span> <span class="string">'@angular/router'</span>;</td><td class="line-why">Already there — keep it</td></tr>
+          <tr><td class="line-num">3</td><td class="line-code"><span class="import-kw">import</span> { <span class="class-name">provideHttpClient</span>, <span class="class-name">withFetch</span> }</td><td class="line-why highlight">ADD THIS — imports the HttpClient provider</td></tr>
+          <tr><td class="line-num">4</td><td class="line-code">  <span class="import-kw">from</span> <span class="string">'@angular/common/http'</span>;</td><td class="line-why highlight">This is where Angular's HTTP tools live</td></tr>
+          <tr class="section-gap"><td class="line-num">6</td><td class="line-code">providers: [</td><td class="line-why"></td></tr>
+          <tr><td class="line-num">7</td><td class="line-code">  provideBrowserGlobalErrorListeners(),</td><td class="line-why">Already there</td></tr>
+          <tr><td class="line-num">8</td><td class="line-code">  provideRouter(routes),</td><td class="line-why">Already there</td></tr>
+          <tr><td class="line-num">9</td><td class="line-code">  provideClientHydration(withEventReplay()),</td><td class="line-why">Already there</td></tr>
+          <tr><td class="line-num">10</td><td class="line-code">  <span class="class-name">provideHttpClient</span>(<span class="method">withFetch</span>())</td><td class="line-why highlight">ADD THIS — registers HttpClient; withFetch() uses modern Fetch API</td></tr>
+          <tr><td class="line-num">11</td><td class="line-code">]</td><td class="line-why"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step frontend">
+    <div class="step-header">
+      <div class="step-number">6</div>
+      <h2>Create auth.service.ts — The HTTP call to the backend</h2>
+      <span class="tag">Frontend</span>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">
+        A service is a reusable class that handles data operations. Keeping the HTTP call here (not in the component) means if the API URL changes, you fix it in one place.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span>src/app/auth.service.ts</span><span>New File</span></div>
+        <table class="code-table">
+          <tr><td class="line-num">1</td><td class="line-code"><span class="import-kw">import</span> { <span class="class-name">Injectable</span> } <span class="import-kw">from</span> <span class="string">'@angular/core'</span>;</td><td class="line-why">Brings in the @Injectable decorator</td></tr>
+          <tr><td class="line-num">2</td><td class="line-code"><span class="import-kw">import</span> { <span class="class-name">HttpClient</span> } <span class="import-kw">from</span> <span class="string">'@angular/common/http'</span>;</td><td class="line-why highlight">HttpClient is what actually sends the HTTP POST to Spring Boot</td></tr>
+          <tr><td class="line-num">3</td><td class="line-code"><span class="import-kw">import</span> { <span class="class-name">Observable</span> } <span class="import-kw">from</span> <span class="string">'rxjs'</span>;</td><td class="line-why info">Observable is like a promise — it represents data that will arrive later</td></tr>
+          <tr class="section-gap"><td class="line-num">5</td><td class="line-code"><span class="annotation">@Injectable</span>({ providedIn: <span class="string">'root'</span> })</td><td class="line-why highlight">Makes this service available everywhere in the app — no need to add to providers manually</td></tr>
+          <tr><td class="line-num">6</td><td class="line-code"><span class="keyword">export class</span> <span class="class-name">AuthService</span> {</td><td class="line-why"></td></tr>
+          <tr class="section-gap"><td class="line-num">7</td><td class="line-code">  <span class="keyword">private</span> baseUrl = <span class="string">'http://localhost:8080/api/users'</span>;</td><td class="line-why info">Base URL of your Spring Boot server — 8080 is the default Spring port</td></tr>
+          <tr class="section-gap"><td class="line-num">9</td><td class="line-code">  <span class="keyword">constructor</span>(<span class="keyword">private</span> http: <span class="class-name">HttpClient</span>) {}</td><td class="line-why highlight">Angular injects HttpClient here automatically — you just ask for it</td></tr>
+          <tr class="section-gap"><td class="line-num">11</td><td class="line-code">  <span class="method">signup</span>(user: { name: <span class="type">string</span>; email: <span class="type">string</span>; password: <span class="type">string</span> })</td><td class="line-why">Method that takes the form data as a typed object</td></tr>
+          <tr><td class="line-num">12</td><td class="line-code">    : <span class="class-name">Observable</span>&lt;<span class="keyword">any</span>&gt; {</td><td class="line-why info">Returns an Observable — the component must subscribe to trigger the call</td></tr>
+          <tr><td class="line-num">13</td><td class="line-code">    <span class="keyword">return this</span>.http.<span class="method">post</span>(</td><td class="line-why highlight">http.post() sends a POST request — this is the actual HTTP call</td></tr>
+          <tr><td class="line-num">14</td><td class="line-code">      <span class="string">`${this.baseUrl}/signup`</span>, user);</td><td class="line-why highlight">URL = /api/users/signup, body = the user object as JSON</td></tr>
+          <tr><td class="line-num">15</td><td class="line-code">  }</td><td class="line-why"></td></tr>
+          <tr><td class="line-num">16</td><td class="line-code">}</td><td class="line-why"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step frontend">
+    <div class="step-header">
+      <div class="step-number">7</div>
+      <h2>Update signup.ts — Call the service on form submit</h2>
+      <span class="tag">Frontend</span>
+    </div>
+    <div class="step-body">
+      <div class="step-desc">
+        Replace the <code>console.log</code> in <code>onSubmit()</code> with a call to <code>AuthService</code>. The component just collects the data and delegates the HTTP work to the service.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span>src/app/signup/signup.ts</span><span>Edit</span></div>
+        <table class="code-table">
+          <tr><td class="line-num">1</td><td class="line-code"><span class="import-kw">import</span> { <span class="class-name">Component</span> } <span class="import-kw">from</span> <span class="string">'@angular/core'</span>;</td><td class="line-why">Already there</td></tr>
+          <tr><td class="line-num">2</td><td class="line-code"><span class="import-kw">import</span> { <span class="class-name">FormsModule</span> } <span class="import-kw">from</span> <span class="string">'@angular/forms'</span>;</td><td class="line-why">Already there — needed for ngModel</td></tr>
+          <tr><td class="line-num">3</td><td class="line-code"><span class="import-kw">import</span> { <span class="class-name">AuthService</span> } <span class="import-kw">from</span> <span class="string">'../auth.service'</span>;</td><td class="line-why highlight">ADD THIS — imports your new service</td></tr>
+          <tr class="section-gap"><td class="line-num">5</td><td class="line-code"><span class="annotation">@Component</span>({ ... })</td><td class="line-why">Keep exactly as is</td></tr>
+          <tr><td class="line-num">6</td><td class="line-code"><span class="keyword">export class</span> <span class="class-name">Signup</span> {</td><td class="line-why"></td></tr>
+          <tr class="section-gap"><td class="line-num">7</td><td class="line-code">  User = { name: <span class="string">''</span>, email: <span class="string">''</span>, password: <span class="string">''</span> };</td><td class="line-why">Already there — holds the form values via ngModel</td></tr>
+          <tr class="section-gap"><td class="line-num">9</td><td class="line-code">  <span class="keyword">constructor</span>(<span class="keyword">private</span> authService: <span class="class-name">AuthService</span>) {}</td><td class="line-why highlight">ADD THIS — Angular injects AuthService; now you can call authService.signup()</td></tr>
+          <tr class="section-gap"><td class="line-num">11</td><td class="line-code">  <span class="method">onSubmit</span>() {</td><td class="line-why">Called when the form is submitted</td></tr>
+          <tr><td class="line-num">12</td><td class="line-code">    <span class="keyword">this</span>.authService.<span class="method">signup</span>(<span class="keyword">this</span>.User).<span class="method">subscribe</span>({</td><td class="line-why highlight">subscribe() is required — without it the HTTP request never actually fires</td></tr>
+          <tr><td class="line-num">13</td><td class="line-code">      next: (res) =&gt; console.<span class="method">log</span>(<span class="string">'Saved:'</span>, res),</td><td class="line-why info">Runs when the backend responds with success — res is the saved User with its ID</td></tr>
+          <tr><td class="line-num">14</td><td class="line-code">      error: (err) =&gt; console.<span class="method">error</span>(<span class="string">'Error:'</span>, err)</td><td class="line-why important">Runs if something goes wrong — always handle errors</td></tr>
+          <tr><td class="line-num">15</td><td class="line-code">    });</td><td class="line-why"></td></tr>
+          <tr><td class="line-num">16</td><td class="line-code">  }</td><td class="line-why"></td></tr>
+          <tr><td class="line-num">17</td><td class="line-code">}</td><td class="line-why"></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final callout -->
+  <div class="callout" style="margin-top: 10px; margin-bottom: 40px;">
+    <span class="callout-icon">🚀</span>
+    <span class="callout-text">
+      <strong>Run order:</strong> Start Spring Boot first (<code>mvn spring-boot:run</code> inside the <code>backend/</code> folder), then start Angular (<code>ng serve</code> inside <code>frontend/</code>). The <code>users</code> table will be created automatically on first run. Open the browser console after submitting the form — you should see <code>Saved: {id: 1, name: ...}</code>
+    </span>
+  </div>
+
+</div>
+
+<footer>
+  Angular 19 + Spring Boot 4 + PostgreSQL (Neon) — Signup Flow Guide
+</footer>
+
+</body>
+</html>
